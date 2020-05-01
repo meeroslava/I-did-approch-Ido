@@ -14,29 +14,28 @@ class App extends React.Component {
   constructor(){
     super()
     this.state = {
-      newSong : ""
+      addSong : ""
 
     }
 
   }
-//gets new song from List
-  getNewSong(song) {
-    this.setState ({newSong: song})
-    //TODO add "prevent default"
-  }
+  addSongHandler= (newSong)=>{
+    this.setState({addSong: newSong})
 
+  };
+  
 render(){
   return (
     <div className="App">
      <Grid>
        <GridCell span={8}>
-      <div><DailyStats newSong = {this.newSong}/></div>
+      <div><DailyStats passNewSong = {this.state.addSong}/></div>
       <div><Statistics /></div>
       </GridCell>
-      <GridCell span={4}><div className='lists'><Lists callbackFunc = {this.getNewSong}/></div></GridCell>
+      <GridCell span={4}><div className='lists'><Lists getNewSong= {this.addSongHandler}/></div></GridCell>
       </Grid>
     </div>
   );
   }
-
+}
 export default App;
