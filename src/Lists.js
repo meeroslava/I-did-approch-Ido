@@ -8,12 +8,19 @@ import '@material/elevation/dist/mdc.elevation.css';
 import '@material/list/dist/mdc.list.css';
 import '@material/button/dist/mdc.button.css';
 
+import firebase from './firebase';
 import songsList from './songsList.json';
 
 class Lists extends React.Component {
   sendSong = (song) => {
     this.props.getNewSong(song);
     console.log(song);
+  };
+
+  //save to db
+  saveSong = (song) => {
+    const db = firebase.firestore();
+    db.collection("songsLogs").add({name: song, added: new Date()});
   };
 
   songsData = songsList.map((song) => {
@@ -23,7 +30,7 @@ class Lists extends React.Component {
         {song.songName}
         <ListItemMeta>
           <Button label='ADD' onClick={() => {
-            return this.sendSong(song.songName)
+            return this.saveSong(song.songName)
           }} raised></Button>
         </ListItemMeta>
       </ListItem>
