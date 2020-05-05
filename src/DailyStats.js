@@ -15,6 +15,10 @@ import '@material/button/dist/mdc.button.css';
 import '@material/layout-grid/dist/mdc.layout-grid.css';
 import '@material/icon-button/dist/mdc.icon-button.css';
 
+
+import firebase from './firebase';
+
+
 class DailyStats extends React.Component {
   constructor(props) {
     super(props);
@@ -24,30 +28,49 @@ class DailyStats extends React.Component {
 
     };
 
-  
+
   }
 
 
+  loadSongs=()=>{
+    const db = firebase.firestore();
+    const songsList = db.collection('songsLog').get(name)
+  }
+
   render() {
-    return <Elevation z={15} wrap><div>
-      <Typography use='headline3'>{this.state.relevantDate}</Typography>
-      <div>
-        <Button label='Previous' style={{ margRight: 25 }} />
-        <Button label='Next' style={{ marginLeft: 25 }} />
+
+    this.state.newSong = this.props.passNewSong;
+    
+    //show songs based on state
+    let songs2display;
+    if (this.state.newSong === "") {
+      songs2display = <Typography use='overline'>Nothing here...</Typography>;
+    }
+    else {
+      songs2display= <ListItem>{this.props.passNewSong} <ListItemMeta>
+        <Button label='remove' raised></Button>
+      </ListItemMeta>
+      </ListItem>;
+    }
+
+    return (
+      <Elevation z={15} wrap><div>
+        <Typography use='headline3'>{this.state.relevantDate}</Typography>
+        <div>
+          <Button label='Previous' style={{ margRight: 25 }} />
+          <Button label='Next' style={{ marginLeft: 25 }} />
+        </div>
+        <Grid>
+          <GridCell span={3}></GridCell>
+          <GridCell span={6}>
+            <List>
+              {songs2display}
+            </List>
+          </GridCell>
+        </Grid>
       </div>
-      <Grid>
-        <GridCell span={3}></GridCell>
-        <GridCell span={6}>
-          <List>
-            <ListItem>{this.props.passNewSong} <ListItemMeta>
-              <Button label='remove' raised></Button>
-            </ListItemMeta>
-            </ListItem>
-          </List>
-        </GridCell>
-      </Grid>
-    </div>
-    </Elevation>
+      </Elevation>
+    )
 
   }
 
