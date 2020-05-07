@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './Stats.css';
 import {Elevation} from '@rmwc/elevation'
 import '@material/elevation/dist/mdc.elevation.css';

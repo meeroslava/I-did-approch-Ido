@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import {Grid, GridCell} from '@rmwc/grid'
+import { Grid, GridCell } from '@rmwc/grid'
 import './App.css';
 import '@material/layout-grid/dist/mdc.layout-grid.css';
 import DailyStats from './DailyStats';
@@ -15,31 +15,35 @@ class App extends React.Component {
 
 
 
-  constructor(){
+  constructor() {
     super()
     this.state = {
-      addSong : ""
+      addSong: ""
 
     }
 
   }
-  addSongHandler= (newSong)=>{
-    this.setState({addSong: newSong})
+  addSongHandler = (newSong) => {
+    this.setState({ addSong: newSong })
 
   };
-  
-render(){
-  return (
-    <div className="App">
-     <Grid>
-       <GridCell span={8}>
-      <div><DailyStats passNewSong = {this.state.addSong}/></div>
-      <div><Statistics /></div>
-      </GridCell>
-      <GridCell span={4}><div className='lists'><Lists getNewSong= {this.addSongHandler}/></div></GridCell>
-      </Grid>
-    </div>
-  );
+
+  render() {
+    return (
+      <div className="App">
+        <Grid>
+          <GridCell span={8}>
+            <div><DailyStats passNewSong={this.state.addSong} /></div>
+            <div><Statistics /></div>
+          </GridCell>
+          <GridCell span={4}>
+            <div className='lists'>
+              <Lists getNewSong={this.addSongHandler} />
+            </div>
+          </GridCell>
+        </Grid>
+      </div>
+    );
   }
 }
 export default App;
