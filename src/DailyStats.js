@@ -21,25 +21,51 @@ class DailyStats extends React.Component {
     super(props);
     this.state = {
       relevantDate: new Date().toLocaleDateString("he-IL"),
-      newSong: "",
+      songs: [],
 
     };
   }
 
-componentDidMount(){
+componentWillMount(){
   const db = firebase.firestore();
-  const songs2display = db.collection("songsLogs").where("name", "==", 'סוזן').onSnapshot((querySnapshot) =>{
-    var songs = [];
+  let date2filter = new Date().toLocaleDateString("he-IL");
+  console.log(date2filter);
+  db.collection("songsLogs").where("added", "==", date2filter).where("removed","==",false).onSnapshot((querySnapshot) =>{
+    const songs = [];
     querySnapshot.forEach((doc)=>{
-      <ListItem>{doc.data().name} <ListItemMeta>
-      <Button label='remove' raised></Button>
-    </ListItemMeta>
-    </ListItem>
+      songs.push({key: doc.id, name: doc.data().name});
     })
+    this.setState({songs: songs});
+    console.log('state: '+this.state.songs);
     
   })
-  return songs2display;  
+   
 }
+
+
+
+ renderSongs = ()=>{
+  if(this.state.songs==[]){
+    console.log("nothing here");
+    return <Typography use='overline'>Nothing here...</Typography>
+  }
+  else{
+    return this.state.songs.map((song)=>{
+      return(
+        <ListItem key={song.key}>{song.name} <ListItemMeta>
+          <Button onClick = {()=>{this.removeSong(song.key)}} label='remove' raised></Button>
+        </ListItemMeta>
+        </ListItem>
+      )
+    })
+  }
+ } 
+
+ removeSong= (songKey)=>{
+  const db = firebase.firestore();
+  db.collection('songsLogs').doc(songKey).update({removed: true})
+ }
+
 
  
 
@@ -54,7 +80,7 @@ componentDidMount(){
         <GridCell span={3}></GridCell>
         <GridCell span={6}>
           <List>
-           {songs2display}
+           {this.renderSongs()}
           </List>
         </GridCell>
       </Grid>
