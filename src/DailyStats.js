@@ -20,67 +20,106 @@ class DailyStats extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      relevantDate: new Date().toLocaleDateString("he-IL"),
+      relevantDate: new Date().toLocaleDateString(),
+      dateToShow: new Date().toLocaleDateString("he-IL"),
       songs: [],
 
     };
   }
+  //get songs that were already added today
+  componentWillMount() {
+    const db = firebase.firestore();
+    let date2filter = new Date().toLocaleDateString("he-IL");
+    db.collection("songsLogs").where("added", "==", date2filter).where("removed", "==", false).onSnapshot((querySnapshot) => {
+      const songs = [];
+      querySnapshot.forEach((doc) => {
+        songs.push({ key: doc.id, name: doc.data().name });
+      })
+      this.setState({ songs: songs });
 
-componentWillMount(){
-  const db = firebase.firestore();
-  let date2filter = new Date().toLocaleDateString("he-IL");
-  console.log(date2filter);
-  db.collection("songsLogs").where("added", "==", date2filter).where("removed","==",false).onSnapshot((querySnapshot) =>{
-    const songs = [];
-    querySnapshot.forEach((doc)=>{
-      songs.push({key: doc.id, name: doc.data().name});
+
     })
-    this.setState({songs: songs});
-    console.log('state: '+this.state.songs);
-    
-  })
-   
-}
 
-
-
- renderSongs = ()=>{
-  if(this.state.songs==[]){
-    console.log("nothing here");
-    return <Typography use='overline'>Nothing here...</Typography>
   }
-  else{
-    return this.state.songs.map((song)=>{
-      return(
-        <ListItem key={song.key}>{song.name} <ListItemMeta>
-          <Button onClick = {()=>{this.removeSong(song.key)}} label='remove' raised></Button>
-        </ListItemMeta>
-        </ListItem>
-      )
+
+
+
+  renderSongs = () => {
+    console.log("state: "+ this.state.songs);
+    if (this.state.songs == "") {
+      console.log("nothing here");
+      return <Typography use='overline'>Nothing here...</Typography>
+    }
+    else {
+      if (this.state.dateToShow != new Date().toLocaleDateString("he-IL")) { //past data - no remove button
+        return this.state.songs.map((song) => {
+          return (
+            <ListItem key={song.key}>{song.name} <ListItemMeta>
+            </ListItemMeta>
+            </ListItem>
+          )
+        })
+      }
+      else { //today data - can be modified with removed button
+        return this.state.songs.map((song) => {
+          return (
+            <ListItem key={song.key}>{song.name} <ListItemMeta>
+              <Button onClick={() => { this.removeSong(song.key) }} label='remove' raised></Button>
+            </ListItemMeta>
+            </ListItem>
+          )
+        })
+      }
+    }
+  }
+
+  removeSong = (songKey) => {
+    const db = firebase.firestore();
+    db.collection('songsLogs').doc(songKey).update({ removed: true })
+  }
+
+  //go backwards with dates
+  getPrevous = () => {
+    this.changeDate(-1);
+  }
+  //go forward with dates
+  getNext = () => {
+    if (this.state.relevantDate == new Date().toLocaleDateString()) { // if it's todays day it cannot show tomorrows data
+      alert("We want to, but right now we cannot predict the future...")
+    }
+    else {
+      //date calculation for query
+      this.changeDate(+1);
+    }
+  }
+
+  changeDate = (direct) => {
+    var tempDate = new Date(this.state.relevantDate); //temp to work on. takes current date
+    tempDate.setDate(tempDate.getDate() + direct); //adds/removes num of days (forward or backward)
+    const date2filter = tempDate.toLocaleDateString("he-IL"); //format adjustment for query
+    this.setState({ relevantDate: tempDate.toLocaleDateString(), dateToShow: tempDate.toLocaleDateString("he-IL") }) //state update
+
+    const db = firebase.firestore();
+    db.collection("songsLogs").where("added", "==", date2filter).where("removed", "==", false).onSnapshot((querySnapshot) => {
+      const songs = [];
+      querySnapshot.forEach((doc) => {
+        songs.push({ key: doc.id, name: doc.data().name });
+      })
+      this.setState({ songs: songs });
     })
   }
- } 
-
- removeSong= (songKey)=>{
-  const db = firebase.firestore();
-  db.collection('songsLogs').doc(songKey).update({removed: true})
- }
-
-
- 
-
   render() {
     return <Elevation z={15} wrap><div>
-      <Typography use='headline3'>{this.state.relevantDate}</Typography>
+      <Typography use='headline3'>{this.state.dateToShow}</Typography>
       <div>
-        <Button label='Previous' style={{ margRight: 25 }} />
-        <Button label='Next' style={{ marginLeft: 25 }} />
+        <Button onClick={() => { this.getPrevous() }} label='Previous' style={{ margRight: 25 }} />
+        <Button onClick={() => { this.getNext() }} label='Next' style={{ marginLeft: 25 }} />
       </div>
       <Grid>
         <GridCell span={3}></GridCell>
         <GridCell span={6}>
           <List>
-           {this.renderSongs()}
+            {this.renderSongs()}
           </List>
         </GridCell>
       </Grid>
