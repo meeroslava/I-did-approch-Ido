@@ -45,9 +45,7 @@ class DailyStats extends React.Component {
 
 
   renderSongs = () => {
-    console.log("state: "+ this.state.songs);
     if (this.state.songs == "") {
-      console.log("nothing here");
       return <Typography use='overline'>Nothing here...</Typography>
     }
     else {
@@ -64,7 +62,7 @@ class DailyStats extends React.Component {
         return this.state.songs.map((song) => {
           return (
             <ListItem key={song.key}>{song.name} <ListItemMeta>
-              <Button onClick={() => { this.removeSong(song.key) }} label='remove' raised></Button>
+              <Button onClick={() => { this.removeSong(song.key); this.updateCounterOnRemove(song.name) }} label='remove' raised></Button>
             </ListItemMeta>
             </ListItem>
           )
@@ -75,56 +73,66 @@ class DailyStats extends React.Component {
 
   removeSong = (songKey) => {
     const db = firebase.firestore();
-    db.collection('songsLogs').doc(songKey).update({ removed: true })
+    db.collection('songsLogs').doc(songKey).update({ removed: true });;
+  }
+
+
+  updateCounterOnRemove = (song) => {
+    const db = firebase.firestore();
+    db.collection('totalStats').where("name", '==', song).get().then(doc => {
+      db.collection('totalStats').doc(doc.docs[0].id).update({ count: doc.docs[0].data().count - 1 });
+    })
   }
 
   //go backwards with dates
   getPrevous = () => {
-    this.changeDate(-1);
-  }
+        this.changeDate(-1);
+      }
+
   //go forward with dates
   getNext = () => {
-    if (this.state.relevantDate == new Date().toLocaleDateString()) { // if it's todays day it cannot show tomorrows data
-      alert("We want to, but right now we cannot predict the future...")
-    }
-    else {
-      //date calculation for query
-      this.changeDate(+1);
-    }
-  }
+        if (this.state.relevantDate == new Date().toLocaleDateString()) { // if it's todays day it cannot show tomorrows data
+          alert("We want to, but right now we cannot predict the future...")
+        }
+        else {
+          //date calculation for query
+          this.changeDate(+1);
+        }
+      }
 
   changeDate = (direct) => {
-    var tempDate = new Date(this.state.relevantDate); //temp to work on. takes current date
-    tempDate.setDate(tempDate.getDate() + direct); //adds/removes num of days (forward or backward)
-    const date2filter = tempDate.toLocaleDateString("he-IL"); //format adjustment for query
-    this.setState({ relevantDate: tempDate.toLocaleDateString(), dateToShow: tempDate.toLocaleDateString("he-IL") }) //state update
+        var tempDate = new Date(this.state.relevantDate); //temp to work on. takes current date
+        tempDate.setDate(tempDate.getDate() + direct); //adds/removes num of days (forward or backward)
+        const date2filter = tempDate.toLocaleDateString("he-IL"); //format adjustment for query
+        this.setState({ relevantDate: tempDate.toLocaleDateString(), dateToShow: tempDate.toLocaleDateString("he-IL") }) //state update
 
-    const db = firebase.firestore();
-    db.collection("songsLogs").where("added", "==", date2filter).where("removed", "==", false).onSnapshot((querySnapshot) => {
-      const songs = [];
-      querySnapshot.forEach((doc) => {
-        songs.push({ key: doc.id, name: doc.data().name });
-      })
-      this.setState({ songs: songs });
-    })
-  }
+        const db = firebase.firestore();
+        db.collection("songsLogs").where("added", "==", date2filter).where("removed", "==", false).onSnapshot((querySnapshot) => {
+          const songs = [];
+          querySnapshot.forEach((doc) => {
+            songs.push({ key: doc.id, name: doc.data().name });
+          })
+          this.setState({ songs: songs });
+        })
+      }
+
   render() {
-    return <Elevation z={15} wrap><div>
-      <Typography use='headline3'>{this.state.dateToShow}</Typography>
-      <div>
-        <Button onClick={() => { this.getPrevous() }} label='Previous' style={{ margRight: 25 }} />
-        <Button onClick={() => { this.getNext() }} label='Next' style={{ marginLeft: 25 }} />
-      </div>
-      <Grid>
-        <GridCell span={3}></GridCell>
-        <GridCell span={6}>
-          <List>
-            {this.renderSongs()}
-          </List>
-        </GridCell>
-      </Grid>
+      return<Elevation z = { 15 } wrap>< div >
+    <Typography use='headline3'>{this.state.dateToShow}</Typography>
+    <div>
+      <Button onClick={() => { this.getPrevous() }} label='Previous' style={{ margRight: 25 }} />
+      <Button onClick={() => { this.getNext() }} label='Next' style={{ marginLeft: 25 }} />
     </div>
-    </Elevation>
+    <Grid>
+      <GridCell span={3}></GridCell>
+      <GridCell span={6}>
+        <List>
+          {this.renderSongs()}
+        </List>
+      </GridCell>
+    </Grid>
+    </div >
+    </Elevation >
 
   }
 
