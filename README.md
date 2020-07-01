@@ -3,9 +3,12 @@
 https://i-did-approach-ido.herokuapp.com/
 
 ## About this project
-This is a project that I worked on to learn ReactJS. It has basic UI because my focus was to create a functioning app. 
+This is a project that I worked on to learn ReactJS. It has basic UI because my focus was to create a functioning app.'
+
 UI - [RMWC](https://rmwc.io/)
+
 Database - Firestore
+
 Graph - [React-vis](https://uber.github.io/react-vis/)
 
 
