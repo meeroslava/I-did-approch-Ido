@@ -1,6 +1,6 @@
 import React from 'react';
-import logo from './logo.svg';
-import { Grid, GridCell } from '@rmwc/grid'
+import { Grid, GridCell} from '@rmwc/grid'
+import { Elevation } from '@rmwc/elevation'
 import './App.css';
 import '@material/layout-grid/dist/mdc.layout-grid.css';
 import DailyStats from './DailyStats';
@@ -37,9 +37,11 @@ class App extends React.Component {
             <div><Statistics /></div>
           </GridCell>
           <GridCell span={4}>
+          <Elevation z={15} wrap={true}>
             <div className='lists'>
               <Lists getNewSong={this.addSongHandler} />
             </div>
+            </Elevation>
           </GridCell>
         </Grid>
       </div>

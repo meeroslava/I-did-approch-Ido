@@ -3,7 +3,9 @@ import {
     XAxis,
     YAxis,
     VerticalBarSeries,
-    FlexibleXYPlot
+    FlexibleXYPlot,
+    VerticalGridLines,
+    HorizontalGridLines,
 } from 'react-vis'
 import firebase from './firebase'
 
@@ -16,6 +18,7 @@ class Chart extends React.Component {
             stats: []
         }
     }
+
     //get stats from DB
     componentWillMount() {
         const db = firebase.firestore();
@@ -32,20 +35,25 @@ class Chart extends React.Component {
 
 
     render() {
+        const hint = this.state.hint;
         return (
 
             <FlexibleXYPlot
                 width={1100}
-                height={300}
+                height={400}
                 xType="ordinal"
-                yType="ordinal"
-                margin={40, 10, 10, 100}
+                margin={100, 100, 100, 100}
             >
+                
                 <VerticalBarSeries
+                type="log"
                     color="#60f"
                     data={this.state.stats} />
-                <XAxis tickLabelAngle={-45} tickSizeInner={10} tickPadding={14} />
-                <YAxis />
+                <XAxis tickLabelAngle={-45} tickSizeInner={30} tickPadding={14} />
+                <VerticalGridLines/>
+                <HorizontalGridLines/>
+                <YAxis/>
+                
             </FlexibleXYPlot>
 
         )

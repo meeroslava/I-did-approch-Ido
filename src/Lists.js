@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button } from '@rmwc/button'
-import { Elevation } from '@rmwc/elevation'
 import { List, ListItem, ListItemMeta } from '@rmwc/list'
 
 
@@ -63,11 +62,11 @@ class Lists extends React.Component {
   );
 
   render() {
-    return <Elevation z={15} wrap>
+    return <div>
       <List>
         {this.songsData}
       </List>
-    </Elevation>
+    </div>
   }
 }
 
