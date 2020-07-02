@@ -1,4 +1,17 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Try it yourself
+
+https://i-did-approach-ido.herokuapp.com/
+
+## About this project
+This is a project that I worked on to learn ReactJS. It has basic UI because my focus was to create a functioning app.'
+
+UI - [RMWC](https://rmwc.io/)
+
+Database - Firestore
+
+Graph - [React-vis](https://uber.github.io/react-vis/)
+
+In tribute to [שירי מרפסת](https://www.youtube.com/channel/UCl4FIGl2Ntqf-gDiFStna2g)
 
 ## Available Scripts
 
