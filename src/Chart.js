@@ -39,7 +39,7 @@ class Chart extends React.Component {
         return (
 
             <FlexibleXYPlot
-                width={1100}
+                width={800}
                 height={400}
                 xType="ordinal"
                 margin={100, 100, 100, 100}
