@@ -3,7 +3,7 @@
 https://i-did-approach-ido.herokuapp.com/
 
 ## About this project
-This project was created during learning proccess of ReactJS. It has basic UI and backend because my focus was to create a functioning app.'
+This project was created during learning proccess of ReactJS. It has basic UI and backend because my focus was on creating a functioning app.'
 
 UI - [RMWC](https://rmwc.io/)
 
